@@ -38,15 +38,15 @@ will have.
 
 ## Why this project
 
-|                                  |                                                                                                                                                                     |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Never short of ideas**         | Each part is drawn from its own catalogue (16 kinds of eyes, 6 of brows, 10 of noses, 8 of mouths, plus cracks, bats, scars and cheek lines) with random sizes and angles. |
-| **Mix and match**                | Like the eyes of one face and the mouth of another? Lock the parts you want to keep: the next rolls only change the rest.                                          |
-| **Choose your challenge**        | Easy for the kids, Medium and Tough for the grown-ups, Nightmare for those who want to spend the evening on it.                                                    |
-| **Made to be carved**            | Every shape is one piece of cut-out with nothing floating in the middle: pupils, teeth and fangs are tabs attached to the edge, so nothing falls out while you carve. |
-| **Made for the projector**       | Black stage, light outlines, a dashed guide that matches the pumpkin's outline, fullscreen in one click, controls hidden with one key.                              |
-| **Easy to share**                | Every face has a short code. Send it to a friend and they get exactly the same face.                                                                               |
-| **In English and in French**     | Click a flag and the whole page switches language, names of the faces included.                                                                                    |
+|                              |                                                                                                                                                                            |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Never short of ideas**     | Each part is drawn from its own catalogue (16 kinds of eyes, 6 of brows, 10 of noses, 8 of mouths, plus cracks, bats, scars and cheek lines) with random sizes and angles. |
+| **Mix and match**            | Like the eyes of one face and the mouth of another? Lock the parts you want to keep: the next rolls only change the rest.                                                  |
+| **Choose your challenge**    | Easy for the kids, Medium and Tough for the grown-ups, Nightmare for those who want to spend the evening on it.                                                            |
+| **Made to be carved**        | Every shape is one piece of cut-out with nothing floating in the middle: pupils, teeth and fangs are tabs attached to the edge, so nothing falls out while you carve.      |
+| **Made for the projector**   | Black stage, light outlines, a dashed guide that matches the pumpkin's outline, fullscreen in one click, controls hidden with one key.                                     |
+| **Easy to share**            | Every face has a short code. Send it to a friend and they get exactly the same face.                                                                                       |
+| **In English and in French** | Click a flag and the whole page switches language, names of the faces included.                                                                                            |
 
 ## Quick start
 
@@ -56,14 +56,14 @@ will have.
 That's it. If you work in VS Code with the **Live Server** extension, right click the file and pick
 **Open with Live Server**: the page reloads by itself each time you change the code.
 
-| Key or action             | Effect                                    |
-| ------------------------- | ----------------------------------------- |
-| `Space` or `R`            | New face                                  |
+| Key or action              | Effect                                   |
+| -------------------------- | ---------------------------------------- |
+| `Space` or `R`             | New face                                 |
 | `H` or a click on the face | Hide or show the controls                |
-| **Fullscreen** button     | Fullscreen with the controls hidden       |
-| **Keep** chips            | Lock eyes, brows, nose, mouth or details  |
-| **Difficulty** chips      | Only roll faces of that level             |
-| Flags                     | Switch between English and French         |
+| **Fullscreen** button      | Fullscreen with the controls hidden      |
+| **Keep** chips             | Lock eyes, brows, nose, mouth or details |
+| **Difficulty** chips       | Only roll faces of that level            |
+| Flags                      | Switch between English and French        |
 
 ## Gallery
 
@@ -77,11 +77,11 @@ A few faces rolled by the generator, five per level. Each one comes with its cod
 
 <br />
 
-| Level     | Codes                                                                                                                                                 |
-| --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Easy      | `5z9i-l1f2-w1gg-zjhc-lyfi` `4v2j-jfa0-wmly-hh8k-c7ii` `xgqk-vc0h-a7b7-tut6-a0ne` `u70y-zuqe-5oy9-ift9-326g` `ifg1-ngmi-oun-zezh-lsyq`                 |
-| Medium    | `rnd2-pyjs-dgpp-f566-wg0q` `p2n4-3tk7-ooi3-1cj4-67qh` `oupw-c0bl-yh5w-gs0v-comc` `s0k5-s01z-mz4b-dfp4-l58o` `yxme-dh5j-i3rb-39k8-ww3s`                |
-| Tough     | `9g8b-yn2n-13vi-ka9z-n9rr` `txcd-5qqu-s9d-6zcu-bkfx` `v5qg-uwdg-qaxh-rfj4-9g76` `rgje-b5vh-wmqb-krse-yxe2` `xj72-az04-kdx3-pvlw-kfxf`                 |
+| Level     | Codes                                                                                                                                                           |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Easy      | `5z9i-l1f2-w1gg-zjhc-lyfi` `4v2j-jfa0-wmly-hh8k-c7ii` `xgqk-vc0h-a7b7-tut6-a0ne` `u70y-zuqe-5oy9-ift9-326g` `ifg1-ngmi-oun-zezh-lsyq`                           |
+| Medium    | `rnd2-pyjs-dgpp-f566-wg0q` `p2n4-3tk7-ooi3-1cj4-67qh` `oupw-c0bl-yh5w-gs0v-comc` `s0k5-s01z-mz4b-dfp4-l58o` `yxme-dh5j-i3rb-39k8-ww3s`                          |
+| Tough     | `9g8b-yn2n-13vi-ka9z-n9rr` `txcd-5qqu-s9d-6zcu-bkfx` `v5qg-uwdg-qaxh-rfj4-9g76` `rgje-b5vh-wmqb-krse-yxe2` `xj72-az04-kdx3-pvlw-kfxf`                           |
 | Nightmare | `1371n-1gzil-1dfwb-14uxb-1fqsp` `11phw-1566x-1tq8s-1yqkx-1g9f2` `1t0ym-18lpu-1e3qm-1hqs3-1tnh8` `1ze9g-1x0no-1p0km-1jwn7-1v1a5` `1pulh-162xu-1jhpw-10va6-13uas` |
 
 You can also add the code after a `#` in the address bar: `citrouille.html#v5qg-uwdg-qaxh-rfj4-9g76`.
@@ -93,12 +93,12 @@ You can also add the code after a `#` in the address bar: `citrouille.html#v5qg-
 Each face gets a score from its number of cuts, its teeth and the delicate shapes it contains (spirals, pupils,
 drips, claw marks). The score decides its level, and the **Difficulty** chips only roll faces of the chosen level.
 
-| Level                                                            | What to expect                                                                                     | For whom                         |
-| ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------- |
-| ![Easy](https://img.shields.io/badge/Easy-8fd16a?style=flat-square)           | Few cuts, simple shapes: triangles, ovals, a mouth with a couple of big teeth                      | Kids, first pumpkin, short evening |
-| ![Medium](https://img.shields.io/badge/Medium-ffc23d?style=flat-square)       | More teeth, curved brows, a skull nose, a crack or a bat                                           | A relaxed evening                |
-| ![Tough](https://img.shields.io/badge/Tough-ff5a4a?style=flat-square)         | Rows of fangs, zigzag teeth, spirals, stitched mouths, scars                                       | Patient hands and a sharp knife  |
-| ![Nightmare](https://img.shields.io/badge/Nightmare-b77bff?style=flat-square) | Its own harder catalogue: clawed eyes, spiked brows, 13 to 16 fangs, double rows of skull teeth, crack networks | The big night of the year        |
+| Level                                                                         | What to expect                                                                                                  | For whom                           |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| ![Easy](https://img.shields.io/badge/Easy-8fd16a?style=flat-square)           | Few cuts, simple shapes: triangles, ovals, a mouth with a couple of big teeth                                   | Kids, first pumpkin, short evening |
+| ![Medium](https://img.shields.io/badge/Medium-ffc23d?style=flat-square)       | More teeth, curved brows, a skull nose, a crack or a bat                                                        | A relaxed evening                  |
+| ![Tough](https://img.shields.io/badge/Tough-ff5a4a?style=flat-square)         | Rows of fangs, zigzag teeth, spirals, stitched mouths, scars                                                    | Patient hands and a sharp knife    |
+| ![Nightmare](https://img.shields.io/badge/Nightmare-b77bff?style=flat-square) | Its own harder catalogue: clawed eyes, spiked brows, 13 to 16 fangs, double rows of skull teeth, crack networks | The big night of the year          |
 
 **Nightmare** is not just a filter: each part has its own harder versions, and a Nightmare face uses them for all five
 parts. Its name and label turn purple. In **All** mode, about one face in ten comes out as a Nightmare.
@@ -109,13 +109,13 @@ Each part is drawn from its own list, then resized, tilted and moved a little, s
 same. Many of these shapes come from the most common ideas in pumpkin carving guides: angry triangle eyes, jagged
 eyes, hypnotic spirals, hollow sockets, a skull nose, toothy grins, crooked teeth, vampire fangs, a stitched mouth.
 
-| Part        | Regular shapes                                                                                                   | Nightmare versions                                                     |
-| ----------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| **Eyes**    | Furious triangles, slits, almonds, round, droopy, diamonds, stars, dead X, hollow sockets, demon eyes with a slit pupil, spirals, jagged, melting, a single cyclops eye | Clawed lids, melting eyes with a pupil, jagged eyes with a pupil, spirals, a spiked cyclops eye |
-| **Brows**   | Bars, lightning bolts, heavy curved brows, flames, unibrow in a V, claw marks                                    | Spiked heavy brows, big flames, spiked unibrow, four claw marks        |
-| **Nose**    | Triangle, upside-down triangle, slits, two holes, diamond, skull heart, skull nostrils, split skull heart, bat    | Split skull heart, bat, skull nostrils, spiky triangle                 |
-| **Mouth**   | Classic teeth, big ravenous grin, vampire fangs, zigzag teeth, skeleton slots, drooling grin, howling scream, stitched | 13 to 16 fangs, deep zigzags, fangs top and bottom, two rows of skull slots, heavy drool, a scream with fangs all around, tight stitches |
-| **Details** | A crack on the forehead (with or without a branch), a bat, lines on the cheeks, a stitched scar                  | Crack networks, cracks on the temples, bigger bats, scars more often   |
+| Part        | Regular shapes                                                                                                                                                          | Nightmare versions                                                                                                                       |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **Eyes**    | Furious triangles, slits, almonds, round, droopy, diamonds, stars, dead X, hollow sockets, demon eyes with a slit pupil, spirals, jagged, melting, a single cyclops eye | Clawed lids, melting eyes with a pupil, jagged eyes with a pupil, spirals, a spiked cyclops eye                                          |
+| **Brows**   | Bars, lightning bolts, heavy curved brows, flames, unibrow in a V, claw marks                                                                                           | Spiked heavy brows, big flames, spiked unibrow, four claw marks                                                                          |
+| **Nose**    | Triangle, upside-down triangle, slits, two holes, diamond, skull heart, skull nostrils, split skull heart, bat                                                          | Split skull heart, bat, skull nostrils, spiky triangle                                                                                   |
+| **Mouth**   | Classic teeth, big ravenous grin, vampire fangs, zigzag teeth, skeleton slots, drooling grin, howling scream, stitched                                                  | 13 to 16 fangs, deep zigzags, fangs top and bottom, two rows of skull slots, heavy drool, a scream with fangs all around, tight stitches |
+| **Details** | A crack on the forehead (with or without a branch), a bat, lines on the cheeks, a stitched scar                                                                         | Crack networks, cracks on the temples, bigger bats, scars more often                                                                     |
 
 The faces get their name from their eyes or their mouth and a list of monsters: _The Clawed Vampire_,
 _The Bony Ghost_, _The Howling Devil_, _Le Croque-mitaine borgne_...
@@ -131,6 +131,7 @@ _The Bony Ghost_, _The Howling Devil_, _Le Croque-mitaine borgne_...
 5. **Carve.** Small details first, the mouth last.
 
 > [!TIP]
+>
 > - Scrape the inside wall down to about 2 cm (3/4 in) before carving: it cuts much more easily.
 > - Teeth, fangs and pupils are tabs attached to the edge. Cut around them, never through their base.
 > - For the finest lines (cracks, scars, claw marks), you can shave off the skin instead of cutting through: the
@@ -214,4 +215,3 @@ Yes, once the page is open. Without a connection on the first visit, only the tw
 falls back to the system fonts.
 
 </details>
-# Smashing-Pumpkins

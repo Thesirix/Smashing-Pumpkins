@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Pumpkin Stencils</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=DM+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: scène noire plein écran pour le projecteur, tiroir de commandes en bas, repliable d'un clic */
+:root {
+  --void: #050403;
+  --bone: #fff6e6;
+  --ember: #ff7a1a;
+  --ash: #8a7a6a;
+  --panel: #14100c;
+  --line: #2c241c;
+  --ok: #8fd16a; --mid: #ffc23d; --hard: #ff5a4a; --night: #b77bff;
+  --f-display: "Creepster", "Impact", fantasy;
+  --f-ui: "DM Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--void); color: var(--bone);
+  font-family: var(--f-ui); font-size: 13px;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+
+#stage { flex: 1; min-height: 0; position: relative; background: var(--void); cursor: pointer; overflow: hidden; }
+#stage.invert { background: #fff; }
+#stage svg { width: 100%; height: 100%; display: block; }
+.cut { fill: var(--bone); }
+.outline .cut { fill: none; stroke: var(--bone); }
+.invert .cut { fill: #000; }
+.invert.outline .cut { fill: none; stroke: #000; }
+.guide { fill: none; stroke: var(--ember); stroke-dasharray: 6 8; opacity: .55; }
+.invert .guide { stroke: #c45200; }
+.flick { animation: flick .45s steps(1) 1; }
+@keyframes flick { 0%{opacity:0} 20%{opacity:1} 35%{opacity:.2} 55%{opacity:1} 70%{opacity:.5} 85%{opacity:1} }
+@media (prefers-reduced-motion: reduce) { .flick { animation: none; } }
+
+#panel {
+  background: var(--panel); border-top: 1px solid var(--line);
+  padding-block: 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 12px; max-height: 58vh; overflow-y: auto;
+}
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px 20px; flex-wrap: wrap; }
+.who { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(26px, 5vw, 38px); margin: 0; color: var(--ember); letter-spacing: .02em; line-height: 1; text-wrap: balance; }
+h1.x { color: var(--night); }
+.meta { display: flex; gap: 14px; flex-wrap: wrap; color: var(--ash); align-items: center; }
+.meta code { color: var(--bone); font-family: var(--f-ui); }
+.diff { padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; font-size: 12px; }
+.diff.f { color: var(--ok); } .diff.m { color: var(--mid); } .diff.c { color: var(--hard); } .diff.x { color: var(--night); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+button { font: inherit; cursor: pointer; }
+.go { font-weight: 500; background: var(--ember); color: var(--void); border: 0; border-radius: 4px; padding: 11px 18px; font-size: 14px; }
+.ghost { background: transparent; color: var(--bone); border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; }
+.lang { display: flex; gap: 6px; margin-left: 4px; }
+.flag { width: 36px; height: 26px; padding: 0; background: none; border: 2px solid transparent; border-radius: 4px; overflow: hidden; opacity: .4; }
+.flag svg { display: block; width: 100%; height: 100%; }
+.flag[aria-pressed="true"] { opacity: 1; border-color: var(--ember); }
+.flag:hover { opacity: .85; }
+.locks, .levels { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.locks .lbl, .levels .lbl { color: var(--ash); margin-right: 4px; }
+.chip { background: transparent; color: var(--ash); border: 1px dashed var(--line); border-radius: 99px; padding: 5px 12px; }
+.chip[aria-pressed="true"] { color: var(--ember); border: 1px solid var(--ember); }
+.chip[aria-pressed="true"]::before { content: "● "; }
+.levels .chip.f[aria-pressed="true"] { color: var(--ok); border-color: var(--ok); }
+.levels .chip.m[aria-pressed="true"] { color: var(--mid); border-color: var(--mid); }
+.levels .chip.c[aria-pressed="true"] { color: var(--hard); border-color: var(--hard); }
+.levels .chip.x { color: var(--night); border-color: #4a2f6b; }
+.levels .chip.x[aria-pressed="true"] { color: var(--night); border: 1px solid var(--night); background: #1e1230; }
+#lvlMsg { color: var(--hard); }
+.hist { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.hist button { flex: 0 0 auto; width: 64px; height: 64px; padding: 4px; background: var(--void); border: 1px solid var(--line); border-radius: 4px; }
+.hist button.cur { border-color: var(--ember); }
+.hist svg { width: 100%; height: 100%; display: block; }
+.hist path { fill: var(--bone); }
+details { color: var(--ash); }
+details summary { cursor: pointer; color: var(--bone); }
+.row { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; margin-top: 10px; }
+label { display: flex; align-items: center; gap: 8px; color: var(--ash); }
+label span.v { color: var(--bone); min-width: 3.5em; font-variant-numeric: tabular-nums; }
+input[type=range] { accent-color: var(--ember); width: 130px; }
+input[type=checkbox] { accent-color: var(--ember); }
+input[type=text] { font: inherit; background: var(--void); color: var(--bone); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; width: 16em; max-width: 100%; }
+details ol { margin: 8px 0 0; padding-left: 20px; max-width: 70ch; line-height: 1.6; }
+button:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--ember); outline-offset: 2px; }
+body.bare #panel { display: none; }
+</style>
+</head>
+<body>
+
+<div id="stage" class="outline">
+  <svg viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet" id="mainSvg">
+    <g id="xf">
+      <g id="guideG">
+        <ellipse class="guide" cx="200" cy="215" rx="185" ry="175" stroke-width="2"></ellipse>
+        <path class="guide" d="M190 215 H210 M200 205 V225" stroke-dasharray="none" stroke-width="1.5"></path>
+      </g>
+      <g id="art"></g>
+    </g>
+  </svg>
+</div>
+
+<div id="panel">
+  <div class="top">
+    <div class="who">
+      <h1 id="name">…</h1>
+      <div class="meta"><span id="diff" class="diff">…</span><span><span data-t="code"></span> <code id="code"></code></span><span id="count"></span></div>
+    </div>
+    <div class="btns">
+      <button class="go" id="roll" data-t="newFace"></button>
+      <button class="ghost" id="fs" data-t="fullscreen"></button>
+      <div class="lang" role="group" aria-label="Language">
+        <button class="flag" id="lang-en" title="English" aria-label="English">
+          <svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <clipPath id="ukA"><path d="M0,0 v30 h60 v-30 z"/></clipPath>
+            <clipPath id="ukB"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+            <g clip-path="url(#ukA)">
+              <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+              <path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+              <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#ukB)" stroke="#C8102E" stroke-width="4"/>
+              <path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+              <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+            </g>
+          </svg>
+        </button>
+        <button class="flag" id="lang-fr" title="Français" aria-label="Français">
+          <svg viewBox="0 0 3 2" preserveAspectRatio="none" aria-hidden="true">
+            <rect width="1" height="2" x="0" fill="#0055A4"/><rect width="1" height="2" x="1" fill="#fff"/><rect width="1" height="2" x="2" fill="#EF4135"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="levels" id="levels"><span class="lbl" data-t="difficulty"></span></div>
+  <div class="locks" id="locks"><span class="lbl" data-t="keep"></span></div>
+  <div class="hist" id="hist"></div>
+  <details>
+    <summary data-t="settings"></summary>
+    <div class="row">
+      <label><span data-t="size"></span> <input id="scale" type="range" min="40" max="160" value="100"><span class="v" id="scaleV">100 %</span></label>
+      <label><span data-t="height"></span> <input id="dy" type="range" min="-120" max="120" value="0"><span class="v" id="dyV">0</span></label>
+      <label><span data-t="stroke"></span> <input id="sw" type="range" min="1" max="10" value="4"><span class="v" id="swV">4</span></label>
+    </div>
+    <div class="row">
+      <label><input id="outline" type="checkbox" checked> <span data-t="outline"></span></label>
+      <label><input id="invert" type="checkbox"> <span data-t="invert"></span></label>
+      <label><input id="showGuide" type="checkbox" checked> <span data-t="guide"></span></label>
+    </div>
+    <div class="row">
+      <label for="codeIn" data-t="loadLabel"></label>
+      <input id="codeIn" type="text" autocomplete="off" spellcheck="false">
+      <button class="ghost" id="load" data-t="load"></button>
+    </div>
+  </details>
+  <details>
+    <summary data-t="howto"></summary>
+    <ol id="steps"></ol>
+  </details>
+</div>
+
+<script>
+// ---------- textes (anglais par défaut, français au clic sur le drapeau) ----------
+const I18N = {
+  en: {
+    title: "Pumpkin Stencils", newFace: "New face", fullscreen: "Fullscreen", difficulty: "Difficulty:", keep: "Keep:",
+    code: "code", cuts: n => n + " cuts", settings: "Projection settings", size: "Size", height: "Height", stroke: "Stroke",
+    outline: "Outline only", invert: "White background", guide: "Pumpkin guide", loadLabel: "Load a code", load: "Load",
+    ph: "e.g. 3k9a-1f2-…", bad: "Invalid code: 5 blocks separated by -", howto: "How to carve it",
+    notFound: "None found with the kept parts, release one", stageTitle: "Click to hide / show the controls",
+    hist: "Previous faces", art: "Pumpkin face to project",
+    levels: { all: "All", f: "Easy", m: "Medium", c: "Tough", x: "Nightmare" },
+    parts: { eyes: "Eyes", brows: "Brows", nose: "Nose", mouth: "Mouth", extra: "Cracks & details" },
+    steps: [
+      "Space or R: new face. H or a click on the picture: hide the controls.",
+      "Like one part? Click it under “Keep” and it won't change on the next rolls.",
+      "Adjust the size until the dashed orange line hugs the pumpkin's edge, then trace the outlines with a marker.",
+      "Cut the small details first and the mouth last.",
+      "Teeth, fangs and pupils are tabs attached to the edge: cut around them, never through their base.",
+      "For very fine lines (cracks, scars), you can shave off the skin instead of cutting through: the wall stays sturdy and the light still shows.",
+      "Scrape the inside wall down to about 2 cm (3/4 in) before carving, it cuts much more easily."
+    ]
+  },
+  fr: {
+    title: "Pochoirs Citrouille", newFace: "Nouveau visage", fullscreen: "Plein écran", difficulty: "Difficulté :", keep: "Garder :",
+    code: "code", cuts: n => n + " découpes", settings: "Réglages projection", size: "Taille", height: "Hauteur", stroke: "Trait",
+    outline: "Contour seul", invert: "Fond blanc", guide: "Repère citrouille", loadLabel: "Charger un code", load: "Charger",
+    ph: "ex. 3k9a-1f2-…", bad: "Code invalide : 5 blocs séparés par -", howto: "Comment s'y prendre",
+    notFound: "Pas trouvé avec les parties gardées, libère-en une", stageTitle: "Clique pour masquer / afficher les commandes",
+    hist: "Visages précédents", art: "Visage de citrouille à projeter",
+    levels: { all: "Toutes", f: "Facile", m: "Moyen", c: "Costaud", x: "Cauchemar" },
+    parts: { eyes: "Yeux", brows: "Sourcils", nose: "Nez", mouth: "Bouche", extra: "Fissures et détails" },
+    steps: [
+      "Espace ou R : nouveau visage. H ou clic sur l'image : cacher les commandes.",
+      "Une partie te plaît ? Clique dessus dans « Garder », elle ne bougera plus aux prochains tirages.",
+      "Règle la taille pour que le pointillé orange épouse le bord de la citrouille, puis repasse les contours au feutre.",
+      "Découpe les petits détails d'abord, la bouche en dernier.",
+      "Les dents, les crocs et les pupilles sont des languettes rattachées au bord : découpe autour, jamais à travers leur base.",
+      "Pour les traits très fins (fissures, cicatrices), tu peux juste gratter la peau au lieu de percer : la paroi reste solide et la lumière passe quand même.",
+      "Vide la paroi à environ 2 cm d'épaisseur avant de sculpter, ça se coupe bien mieux."
+    ]
+  }
+};
+let lang = "en";
+try { const l = localStorage.getItem("pochoir-lang"); if (l === "fr" || l === "en") lang = l; } catch (e) {}
+const t = k => I18N[lang][k];
+
+// ---------- aléatoire reproductible ----------
+function rng(seed) {
+  let a = seed >>> 0;
+  const r = () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+  r.range = (lo, hi) => lo + r() * (hi - lo);
+  r.int = (lo, hi) => Math.floor(r.range(lo, hi + 1));
+  r.chance = p => r() < p;
+  r.pick = arr => arr[Math.floor(r() * arr.length)];
+  r.wpick = list => { const tot = list.reduce((s, x) => s + x[0], 0); let v = r() * tot; for (const [w, x] of list) { if ((v -= w) < 0) return x; } return list[list.length - 1][1]; };
+  return r;
+}
+// Graines normales : 4 caractères en base 36. Graines cauchemar : au-dessus de NM (5 caractères), la partie est générée en version dure.
+const NM = 1679615;
+const newSeed = (nm = false) => Math.floor(Math.random() * NM) + 1 + (nm ? NM : 0);
+const PARTS = ["eyes", "brows", "nose", "mouth", "extra"];
+
+// ---------- géométrie ----------
+// Règle d'or : chaque forme est un trou d'un seul tenant, sans îlot au milieu (un îlot tomberait à la découpe).
+const r1 = n => Math.round(n * 10) / 10;
+const poly = pts => "M" + pts.map(([x, y]) => r1(x) + " " + r1(y)).join(" L") + " Z";
+const xform = (pts, { cx, cy, s = 1, rot = 0, k = 1, ox = 0, oy = 0 }) => pts.map(([x, y]) => {
+  x = (x - ox) * s; y = (y - oy) * s;
+  const xr = x * Math.cos(rot) - y * Math.sin(rot), yr = x * Math.sin(rot) + y * Math.cos(rot);
+  return [cx + (xr + ox) * k, cy + yr + oy];
+});
+const mirror = pts => pts.map(([x, y]) => [400 - x, y]);
+const lens = (w, top, bot, n = 18) => {
+  const p = [];
+  for (let i = 0; i <= n; i++) { const u = -1 + 2 * i / n; p.push([u * w, top(u)]); }
+  for (let i = n - 1; i > 0; i--) { const u = -1 + 2 * i / n; p.push([u * w, bot(u)]); }
+  return p;
+};
+const ring = (r, n = 28, rr = null, off = 0) => Array.from({ length: n }, (_, i) => { const a = off + i / n * Math.PI * 2, R = rr ? (i % 2 ? rr : r) : r; return [R * Math.cos(a), R * Math.sin(a)]; });
+// Bande d'épaisseur variable le long d'une ligne (sourcils, fissures, plis) ; w(t) donne la demi-épaisseur, t de 0 à 1
+const strip = (line, w) => {
+  const L = [], R = [];
+  line.forEach(([x, y], i) => {
+    const [ax, ay] = line[Math.max(0, i - 1)], [bx, by] = line[Math.min(line.length - 1, i + 1)];
+    const l = Math.hypot(bx - ax, by - ay) || 1, nx = -(by - ay) / l, ny = (bx - ax) / l, ww = w(i / (line.length - 1));
+    L.push([x + nx * ww, y + ny * ww]); R.unshift([x - nx * ww, y - ny * ww]);
+  });
+  return L.concat(R);
+};
+// Pupille en languette : une pointe de citrouille qui descend du bord haut de l'œil (ou monte du bas), donc toujours rattachée
+const tongue = (top, bot, pu, len, w = 0.13, fromBot = false) => {
+  const b = u => len * Math.max(0, 1 - Math.abs(u - pu) / w);
+  return fromBot ? [top, u => bot(u) - (bot(u) - top(u)) * b(u)] : [u => top(u) + (bot(u) - top(u)) * b(u), bot];
+};
+const tri = x => 1 - Math.abs((((x % 1) + 1) % 1) * 2 - 1); // vague en dents de scie, pointe à 1
+const saw = (P, Q, n, amp) => {
+  const out = [], dx = Q[0] - P[0], dy = Q[1] - P[1], l = Math.hypot(dx, dy);
+  for (let i = 0; i < n * 2; i++) { const s = i / (n * 2), o = i % 2 ? amp : 0; out.push([P[0] + dx * s - dy / l * o, P[1] + dy * s + dx / l * o]); }
+  return out;
+};
+const spiral = r => {
+  const tMax = r.range(1.6, 1.9) * 2 * Math.PI, line = [];
+  for (let i = 0; i <= 70; i++) { const a = 0.9 + (tMax - 0.9) * i / 70, R = 3 + 24 * a / tMax; line.push([R * Math.cos(a) * 1.1, R * Math.sin(a)]); }
+  return strip(line, s => 1 + 2.3 * Math.min(1, s * 3));
+};
+const cross = (L, w) => [[w, -L], [w, -w], [L, -w], [L, w], [w, w], [w, L], [-w, L], [-w, w], [-L, w], [-L, -w], [-w, -w], [-w, -L]]
+  .map(([x, y]) => [(x - y) * Math.SQRT1_2, (x + y) * Math.SQRT1_2]);
+const heart = (n = 40, t0 = 0, t1 = Math.PI * 2) => Array.from({ length: n + 1 }, (_, i) => {
+  const a = t0 + (t1 - t0) * i / n;
+  return [17 * Math.sin(a) ** 3, 1.2 * (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) - 2];
+});
+const BAT_R = [[0, -5], [3, -11], [5, -6], [10, -7], [20, -11], [30, -14], [27, -6], [24, 0], [19, -3], [14, 3], [9, 0], [5, 8], [0, 11]];
+const bat = () => BAT_R.concat(BAT_R.slice(1, -1).reverse().map(([x, y]) => [-x, y]));
+
+// ---------- mots pour les noms [anglais, français] ----------
+const W = {
+  furieux: ["Furious", "furieux"], fourbe: ["Sneaky", "fourbe"], ruse: ["Sly", "rusé"], hagard: ["Staring", "hagard"],
+  lugubre: ["Gloomy", "lugubre"], percant: ["Piercing", "perçant"], detraque: ["Crazed", "détraqué"], demon: ["Demonic", "démoniaque"],
+  hypno: ["Hypnotic", "hypnotique"], sauvage: ["Savage", "sauvage"], mort: ["Dead", "mort"], fondu: ["Melting", "fondu"],
+  creux: ["Hollow", "creux"], borgne: ["One-Eyed", "borgne"], griffu: ["Clawed", "griffu"],
+  ricaneur: ["Grinning", "ricaneur"], crocs: ["Fanged", "aux crocs"], grognon: ["Grumpy", "grognon"], tordu: ["Crooked", "tordu"],
+  edente: ["Toothless", "édenté"], carnassier: ["Ravenous", "carnassier"], devoreur: ["Devouring", "dévoreur"],
+  hurleur: ["Howling", "hurleur"], recousu: ["Stitched", "recousu"], assoiffe: ["Bloodthirsty", "assoiffé"],
+  dentele: ["Jagged", "dentelé"], decharne: ["Bony", "décharné"], baveux: ["Drooling", "baveux"]
+};
+const NOUNS = [["Demon", "Démon"], ["Specter", "Spectre"], ["Ogre", "Ogre"], ["Butcher", "Boucher"], ["Prowler", "Rôdeur"],
+  ["Bogeyman", "Croque-mitaine"], ["Revenant", "Revenant"], ["Fiend", "Maudit"], ["Scavenger", "Charognard"], ["Devil", "Diable"],
+  ["Goblin", "Gobelin"], ["Vampire", "Vampire"], ["Zombie", "Zombie"], ["Skeleton", "Squelette"], ["Scarecrow", "Épouvantail"],
+  ["Ghost", "Fantôme"], ["Imp", "Lutin"], ["Ghoul", "Ogre des tombes"]];
+const fmtName = (noun, adj, l) => l === "fr"
+  ? (/^[AEIOUÉÈÊ]/.test(noun[1]) ? "L'" : "Le ") + noun[1] + " " + adj[1]
+  : "The " + adj[0] + " " + noun[0];
+
+// ---------- yeux (coordonnées locales : +x pointe vers le nez) ----------
+// w = [poids normal, poids cauchemar], hard = bonus de difficulté
+const EYES = {
+  colere:  { w: [3, 0], word: W.furieux, make: () => [[-44, -24], [42, 6], [0, 30]] },
+  fente:   { w: [2, 0], word: W.fourbe, make: () => lens(44, u => -8 * (1 - u * u), u => 9 * (1 - u * u)) },
+  amande:  { w: [2, 0], word: W.ruse, make: () => lens(42, u => -20 * (1 - u * u), u => 14 * (1 - u * u)) },
+  rond:    { w: [1.2, 0], round: true, word: W.hagard, make: () => ring(27) },
+  triste:  { w: [1.5, 0], sad: true, word: W.lugubre, make: () => lens(42, u => -26 * (1 - u * u) + 6, u => -6 * (1 - u * u) + 6) },
+  losange: { w: [1, 0], word: W.percant, make: () => [[-38, 0], [0, -29], [38, 0], [0, 29]] },
+  etoile:  { w: [1, 0.8], round: true, hard: 1, word: W.detraque, make: () => ring(30, 12, 15, -Math.PI / 2) },
+  croix:   { w: [0.6, 0], round: true, word: W.mort, make: r => cross(r.range(22, 26), 5) },
+  vide:    { w: [1, 0], round: true, word: W.creux, make: r => { const ph = r.range(0, 6), a = r.range(2, 4); return Array.from({ length: 32 }, (_, i) => { const q = i / 32 * Math.PI * 2, R = 28 + a * Math.sin(3 * q + ph); return [R * Math.cos(q) * 1.15, R * Math.sin(q)]; }); } },
+  demon:   { w: [3, 1], hard: 1, word: W.demon, make: r => { const [a, b] = tongue(u => -19 * (1 - u * u) + 9 * u, u => 15 * (1 - u * u) + 9 * u, r.range(0.05, 0.2), r.range(0.7, 0.8)); return lens(46, a, b, 60); } },
+  spirale: { w: [1, 1.5], round: true, hard: 3, word: W.hypno, make: spiral },
+  dechiq:  { w: [1.2, 0], hard: 1, word: W.sauvage, make: () => lens(44, u => -20 * (1 - u * u) - 5 * Math.abs(Math.sin(u * Math.PI * 3.5)) * (1 - u * u), u => 15 * (1 - u * u) + 4 * Math.abs(Math.sin(u * Math.PI * 3)) * (1 - u * u), 48) },
+  fondant: { w: [1.2, 0], hard: 1, drip: true, word: W.fondu, make: r => { const du = r.range(-0.45, 0.15), D = r.range(18, 28); return lens(42, u => -18 * (1 - u * u), u => 13 * (1 - u * u) + D * Math.exp(-(((u - du) / 0.11) ** 2)), 60); } },
+  // versions cauchemar
+  griffu:  { w: [0, 3], hard: 3, word: W.griffu, make: r => { const sp = r.int(2, 3) + 0.5, H = r.range(7, 11); const [a, b] = tongue(u => -20 * (1 - u * u) + 9 * u - H * Math.max(0, Math.sin((u + 1) * Math.PI * sp)) * (1 - u * u), u => 16 * (1 - u * u) + 9 * u, r.range(0.05, 0.2), 0.75); return lens(48, a, b, 72); } },
+  fondNM:  { w: [0, 2], hard: 3, drip: true, word: W.fondu, make: r => { const d1 = r.range(-0.6, -0.35), d2 = r.range(0.35, 0.55), D = r.range(20, 28); const [a, b] = tongue(u => -19 * (1 - u * u) + 8 * u, u => 14 * (1 - u * u) + 8 * u + D * Math.exp(-(((u - d1) / 0.1) ** 2)) + D * 0.7 * Math.exp(-(((u - d2) / 0.09) ** 2)), 0.02, 0.72, 0.12); return lens(46, a, b, 72); } },
+  dechNM:  { w: [0, 2], hard: 3, word: W.sauvage, make: r => { const [a, b] = tongue(u => -21 * (1 - u * u) + 8 * u - 7 * Math.abs(Math.sin(u * Math.PI * 4)) * (1 - u * u), u => 16 * (1 - u * u) + 8 * u + 6 * Math.abs(Math.sin(u * Math.PI * 3.5)) * (1 - u * u), r.range(-0.1, 0.1), 0.62, 0.12, r.chance(0.5)); return lens(47, a, b, 72); } }
+};
+
+function genEyes(r) {
+  const pool = Object.keys(EYES).map(k => [EYES[k].w[r.nm ? 1 : 0], k]).filter(x => x[0] > 0);
+  if (r.chance(r.nm ? 0.15 : 0.06)) {
+    // cyclope : un seul grand œil au milieu, pupille en languette
+    const s = r.range(0.95, 1.08), sp = r.int(3, 4) + 0.5, H = r.nm ? r.range(7, 10) : 0;
+    const e = u => Math.sqrt(1 - u * u);
+    const [a, b] = tongue(u => -30 * e(u) - H * Math.max(0, Math.sin((u + 1) * Math.PI * sp)) * e(u), u => 26 * e(u), 0, r.range(0.74, 0.82), 0.11);
+    return { paths: [poly(xform(lens(50, a, b, 80), { cx: 200, cy: 160, s }))], word: W.borgne, cyclops: true, hard: r.nm ? 4 : 2 };
+  }
+  const type = r.wpick(pool), E = EYES[type];
+  const s = r.range(0.88, 1.12);
+  const rotFor = e => e.round ? r.range(-0.2, 0.2) : e.sad ? r.range(-0.3, -0.05) : r.range(-0.12, 0.3);
+  const rot = rotFor(E);
+  const cx = 132 + r.range(-4, 4), cy = 160 + r.range(-6, 6);
+  const pts = E.make(r);
+  let E2 = E, pts2 = pts, s2 = s, rot2 = rot, dy2 = 0;
+  if (!r.nm && r.chance(0.15)) { E2 = EYES[r.wpick(pool)]; pts2 = E2.make(r); s2 = r.range(0.72, 0.95); rot2 = rotFor(E2); dy2 = r.range(-4, 6); }
+  return {
+    paths: [poly(xform(pts, { cx, cy, s, rot })), poly(xform(pts2, { cx: 400 - cx, cy: cy + dy2, s: s2, rot: rot2, k: -1 }))],
+    word: E.word, hard: (E.hard || 0) + (E2.hard || 0), drip: !!(E.drip || E2.drip)
+  };
+}
+
+// ---------- sourcils ----------
+function genBrows(r, out) {
+  const cyc = out.eyes.cyclops;
+  if (!r.nm && !cyc && r.chance(0.3)) return { paths: [] };
+  const shape = cyc ? "uni" : r.nm
+    ? r.wpick([[2, "lourd"], [1.5, "flamme"], [1, "uni"], [1.5, "griffes"]])
+    : r.wpick([[1, "barre"], [1, "eclair"], [1.6, "lourd"], [0.8, "flamme"], [0.6, "uni"], [0.4, "griffes"]]);
+  const cx = 132 + r.range(-3, 3), len = r.range(32, 42), rr = r.range(-0.08, 0.12);
+  const pair = pts => [poly(pts), poly(mirror(pts))];
+  const place = pts => xform(pts, { cx, cy: 160, rot: rr, ox: 0, oy: -46 });
+  if (shape === "uni") {
+    // monosourcil en V qui plonge au milieu
+    const Wd = cyc ? r.range(62, 72) : r.range(98, 108), Y = cyc ? 96 : 100, dip = r.range(8, 14), th = r.range(5, 7);
+    const line = Array.from({ length: 41 }, (_, i) => { const u = -1 + i / 20; return [200 + u * Wd, Y + dip * Math.exp(-((u / 0.4) ** 2)) - 6 * Math.sin(Math.PI * u) ** 2]; });
+    const sp = r.nm ? (q => 4 * Math.max(0, Math.sin(q * Math.PI * 9)) ** 2) : () => 0;
+    return { paths: [poly(strip(line, q => 1 + th * Math.sin(Math.PI * q) ** 0.6 + sp(q)))], uni: true, hard: r.nm ? 2 : 0 };
+  }
+  if (shape === "lourd") {
+    // gros sourcil courbé qui plonge vers le nez (hérissé de pics en cauchemar)
+    const L = len * 1.25, arch = r.range(10, 16), drop = r.range(10, 16), th = r.range(6, 9);
+    const line = Array.from({ length: 41 }, (_, i) => { const u = -1 + i / 20; return [u * L, -46 - arch * (1 - u * u) + drop * u]; });
+    const sp = r.nm ? (q => r1(5 * Math.max(0, Math.sin(q * Math.PI * 5)) ** 2)) : () => 0;
+    return { paths: pair(place(strip(line, q => 1 + th * Math.sin(Math.PI * q) ** 0.7 + sp(q)))), hard: r.nm ? 2 : 0 };
+  }
+  if (shape === "flamme") {
+    // bord haut en flammes, bord bas lisse
+    const L = len * 1.2, arch = r.range(8, 13), drop = r.range(8, 14), th = r.range(3.5, 5), F = r.nm ? r.range(11, 15) : r.range(7, 10), np = r.nm ? 4 : 3;
+    const base = u => -46 - arch * (1 - u * u) + drop * u, top = [], bot = [];
+    for (let i = 0; i <= 60; i++) {
+      const u = -1 + i / 30, e = Math.sqrt(1 - u * u);
+      top.push([u * L, base(u) - th * e - F * tri((u + 1) / 2 * np) ** 2 * e]);
+      if (i > 0 && i < 60) bot.unshift([u * L, base(u) + th * e]);
+    }
+    return { paths: pair(place(top.concat(bot))), hard: 1 };
+  }
+  if (shape === "griffes") {
+    // traces de griffes en biais au-dessus de chaque œil
+    const n = r.nm ? 4 : 3, gap = r.nm ? 18 : 22, paths = [];
+    for (let i = 0; i < n; i++) {
+      const x = -34 + i * gap + r.range(-2, 2), ln = r.range(0.85, 1.1);
+      const line = [[x, -76], [x + 7 * ln, -62], [x + 13 * ln, -46]];
+      paths.push(...pair(place(strip(line, q => 0.5 + 3 * Math.sin(Math.PI * q)))));
+    }
+    return { paths, hard: 1 };
+  }
+  const rot = r.range(-0.3, 0.3), thick = r.range(11, 16);
+  let pts = shape === "barre"
+    ? [[-len, -64 - thick / 2], [len, -64 - thick / 2 + 4], [len, -64 + thick / 2], [-len, -64 + thick / 2 - 2]]
+    : [[-len, -66], [0, -70], [len, -62], [len, -54], [0, -61], [-len, -57]];
+  pts = xform(pts, { cx, cy: 160, rot, ox: 0, oy: -64 });
+  return { paths: pair(pts) };
+}
+
+// ---------- nez ----------
+function genNose(r) {
+  const type = r.nm
+    ? r.wpick([[2, "demicoeur"], [1.5, "chauve"], [1.5, "crane"], [1.5, "pointes"]])
+    : r.wpick([[3, "tri"], [2, "inv"], [2, "fentes"], [1.5, "crane"], [2, "coeur"], [1, "losange"], [1, "trous"], [0.8, "chauve"], [0.8, "demicoeur"], [0.8, "aucun"]]);
+  const s = r.nm ? r.range(1, 1.15) : r.range(0.85, 1.1);
+  const T = pts => poly(xform(pts, { cx: 200, cy: 231, s }));
+  const slit = () => lens(14, u => -3 * (1 - u * u), u => 3 * (1 - u * u));
+  switch (type) {
+    case "tri": return { paths: [T([[0, -19], [18, 17], [-18, 17]])] };
+    case "inv": return { paths: [T([[-16, -16], [16, -16], [0, 16]])] };
+    case "losange": return { paths: [T([[0, -19], [12, 0], [0, 19], [-12, 0]])] };
+    case "fentes": return { paths: [T(slit().map(([x, y]) => [-8 + y, x])), T(slit().map(([x, y]) => [8 + y, x]))] };
+    case "trous": return { paths: [T(ring(6, 16).map(([x, y]) => [x - 9, y * 1.4])), T(ring(6, 16).map(([x, y]) => [x + 9, y * 1.4]))] };
+    case "coeur": return { paths: [T(heart())] }; // nez de crâne : cœur à l'envers, pointe en haut
+    case "demicoeur": {
+      // nez de crâne en deux narines séparées par une cloison
+      const half = heart(24, Math.PI, Math.PI * 2).map(([x, y]) => [x - 2.4, y]);
+      return { paths: [T(half), T(half.map(([x, y]) => [-x, y]))], hard: 1 };
+    }
+    case "chauve": return { paths: [T(bat().map(([x, y]) => [x * 0.8, y * 0.8]))], hard: 1 };
+    case "crane": return { paths: [T([[-3, -18], [-3, 14], [-16, 10], [-12, -6]]), T([[3, -18], [3, 14], [16, 10], [12, -6]])] };
+    case "pointes": {
+      const A = [-19, -16], B = [19, -16], C = [0, 21];
+      return { paths: [T([A, ...saw(B, C, 3, -5), ...saw(C, A, 3, -5)])], hard: 1 };
+    }
+    default: return { paths: [] };
+  }
+}
+
+// ---------- bouches ----------
+// Bouche « sourire » : bord haut et bord bas en paraboles, dents en languettes. Une dent : [x, profondeur, demi-largeur].
+// rel = profondeurs en fraction de l'ouverture ; frac = limite pour que les dents du haut et du bas ne se touchent jamais.
+function smile(o) {
+  const yt0 = x => { const u = (x - 200) / o.hw; return o.midT + (o.cT - o.midT) * u * u + (o.tilt || 0) * (x - 200); };
+  const yb0 = x => { const u = (x - 200) / o.hw; return o.midB + (o.cornerB - o.midB) * u * u + (o.tilt || 0) * (x - 200); };
+  const bump = (x, list, gap) => {
+    let v = 0;
+    for (const [c, d, w] of list) { const dd = Math.abs(x - c); if (dd < w) v = Math.max(v, (o.rel ? d * gap : d) * (o.pointy ? 1 - dd / w : 1)); }
+    return v;
+  };
+  const drip = x => (o.drips || []).reduce((s, [c, len, w]) => s + len * Math.exp(-(((x - c) / w) ** 2)), 0);
+  const x0 = 200 - o.hw, x1 = 200 + o.hw, top = [], bot = [];
+  for (let x = x0; x <= x1 + 0.01; x += 1.5) {
+    const gap = yb0(x) - yt0(x), lim = gap * (o.frac || 0.42);
+    top.push([x, yt0(x) + Math.min(lim, bump(x, o.tops, gap))]);
+    bot.unshift([x, yb0(x) - Math.min(lim, bump(x, o.bots, gap)) + drip(x)]);
+  }
+  return { paths: [poly(top.concat(bot))], corners: [[x0, yt0(x0)], [x1, yt0(x1)]], teeth: o.tops.length + o.bots.length };
+}
+const evenly = (r, n, span, jit = 4) => Array.from({ length: n }, (_, i) => 200 - span / 2 + span * (i + 0.5) / n + r.range(-jit, jit));
+
+const MOUTHS = {
+  dents: r => {
+    const hw = r.range(100, 135), frown = r.chance(0.15), cornerT = r.range(266, 284);
+    const midT = frown ? cornerT - 6 : cornerT + r.range(0, 38), cT = frown ? cornerT + 26 : cornerT;
+    const tilt = r.chance(0.3) ? r.range(-0.12, 0.12) : 0;
+    const nt = r.wpick([[1, 0], [2, 1], [3, 2], [2, 3], [2, 4], [1.5, 5], [1, 6]]), nb = r.wpick([[2, 0], [3, 1], [2, 2], [1.5, 3], [1, 4]]);
+    const pointy = r.chance(0.65), depth = r.range(22, 40), span = hw * 1.5;
+    const tw = Math.min(14, Math.max(7, span / Math.max(nt, nb, 1) / 2 - 3));
+    const tops = evenly(r, nt, span), bots = evenly(r, nb, span).map(b => tops.some(c => Math.abs(c - b) < 10) ? b + 14 : b);
+    const m = smile({ hw, cT, midT, cornerB: cT + r.range(4, 14), midB: Math.min(372, midT + r.range(frown ? 45 : 50, 100)), tilt, pointy,
+      tops: tops.map(x => [x, depth, tw]), bots: bots.map(x => [x, depth, tw]) });
+    m.word = nt + nb >= 6 ? W.crocs : frown ? W.grognon : tilt ? W.tordu : nt + nb === 0 ? W.edente : W.ricaneur;
+    if (frown) m.corners = null; // pas de plis de joues sur une bouche boudeuse
+    return m;
+  },
+  grin: r => {
+    // grand sourire carnassier : coins très hauts, deux rangées de crocs
+    const hw = r.range(136, 150), cT = r.range(238, 252), midT = cT + r.range(42, 58);
+    const nt = r.nm ? r.int(13, 16) : r.int(8, 12), nb = r.nm ? r.int(11, 14) : r.int(7, 10);
+    const depth = r.nm ? r.range(38, 48) : r.range(30, 42), span = hw * 1.62;
+    const tw = Math.min(14, Math.max(r.nm ? 5 : 7, span / Math.max(nt, nb) / 2 - 3));
+    const k = () => r.nm ? r.range(0.6, 1.1) : 1;
+    const m = smile({ hw, cT, midT, cornerB: cT + r.range(6, 12), midB: Math.min(374, midT + r.range(58, 80)), pointy: true,
+      tops: evenly(r, nt, span).map(x => [x, depth * k(), tw]), bots: evenly(r, nb, span).map(x => [x, depth * k(), tw]) });
+    m.word = r.nm ? W.devoreur : W.carnassier; m.hard = r.nm ? 3 : 1;
+    return m;
+  },
+  vampire: r => {
+    // deux longs crocs qui descendent presque jusqu'en bas, petites incisives entre les deux
+    const hw = r.range(95, 122), cT = r.range(258, 272), midT = cT + r.range(14, 28), midB = midT + r.range(44, 58);
+    const f = hw * r.range(0.32, 0.42), fw = r.range(9, 12), inner = f * 2 - fw * 2.4;
+    const tops = [[200 - f, 0.85, fw], [200 + f, 0.85, fw]], bots = [];
+    const ni = r.nm ? r.int(4, 6) : r.int(0, 3);
+    evenly(r, ni, inner, 1.5).forEach(x => tops.push([x, 0.3, Math.min(7, inner / Math.max(ni, 1) / 2)]));
+    if (r.nm) {
+      const g = f + r.range(17, 24);
+      bots.push([200 - g, 0.8, fw * 0.9], [200 + g, 0.8, fw * 0.9]);
+      const nbi = r.int(3, 5);
+      evenly(r, nbi, inner, 1.5).forEach(x => bots.push([x, 0.25, Math.min(6, inner / nbi / 2)]));
+    }
+    const m = smile({ hw, cT, midT, cornerB: cT + r.range(4, 8), midB, pointy: true, rel: true, frac: 0.85, tops, bots });
+    m.word = W.assoiffe; m.hard = r.nm ? 2 : 1;
+    return m;
+  },
+  zigzag: r => {
+    // dents de travers qui s'emboîtent en zigzag
+    const hw = r.range(110, 140), cT = r.range(262, 280), midT = cT + r.range(8, 28), midB = Math.min(372, midT + r.range(55, 78));
+    const n = r.nm ? r.int(10, 13) : r.int(6, 9), span = hw * 1.7, sp = span / n, w = sp / 2 + 0.5;
+    const d = () => r.range(r.nm ? 0.45 : 0.35, 0.62);
+    const tops = Array.from({ length: n }, (_, i) => [200 - span / 2 + sp * (i + 0.5), d(), w]);
+    const bots = Array.from({ length: n - 1 }, (_, i) => [200 - span / 2 + sp * (i + 1), d(), w]);
+    const m = smile({ hw, cT, midT, cornerB: cT + r.range(6, 12), midB, pointy: true, rel: true, frac: 0.62, tops, bots });
+    m.word = W.dentele; m.hard = r.nm ? 2 : 1;
+    return m;
+  },
+  squelette: r => {
+    // bouche de squelette : une rangée (deux en cauchemar) de fentes séparées par des cloisons
+    const hw = r.range(105, 135), cT = r.range(262, 278), midT = cT + r.range(10, 30), H = r.range(22, 30);
+    const n = r.nm ? r.int(12, 15) : r.int(8, 12), g = r.range(3.8, 4.8), sp = 2 * hw / n;
+    const yt = x => { const u = (x - 200) / hw; return midT + (cT - midT) * u * u; };
+    const h = x => H * (1 - 0.5 * ((x - 200) / hw) ** 2);
+    const slot = (a, b, y, hh) => { const c = (a + b) / 2; return poly([[a, y(a)], [c, y(c)], [b, y(b)], [b, y(b) + hh(b)], [c, y(c) + hh(c)], [a, y(a) + hh(a)]]); };
+    const paths = [];
+    for (let i = 0; i < n; i++) {
+      const a = 200 - hw + sp * i + g / 2, b = a + sp - g;
+      paths.push(slot(a, b, yt, h));
+      if (r.nm) paths.push(slot(a, b, x => yt(x) + h(x) + g, x => h(x) * 0.8));
+    }
+    return { paths, word: W.decharne, teeth: 0, corners: [[200 - hw, yt(200 - hw)], [200 + hw, yt(200 + hw)]], hard: r.nm ? 2 : 1 };
+  },
+  bave: r => {
+    // sourire qui bave : dents en haut, coulures en bas
+    const hw = r.range(105, 135), cT = r.range(262, 276), midT = cT + r.range(10, 32), midB = Math.min(346, midT + r.range(45, 62));
+    const nt = r.nm ? r.int(8, 11) : r.int(3, 6), span = hw * 1.5, tw = Math.min(12, Math.max(r.nm ? 5 : 7, span / nt / 2 - 3));
+    const drips = evenly(r, r.nm ? r.int(4, 6) : r.int(2, 4), hw * 1.3, 8).map(x => [x, r.range(12, 24), r.range(4.5, 7)]);
+    const m = smile({ hw, cT, midT, cornerB: cT + r.range(6, 12), midB, pointy: true,
+      tops: evenly(r, nt, span).map(x => [x, r.range(20, 32), tw]), bots: [], drips });
+    m.word = W.baveux; m.hard = r.nm ? 3 : 1;
+    return m;
+  },
+  cri: r => {
+    const w = r.range(52, 72), h = r.range(100, 124), cy = 264 + h / 2, wob = r.range(1.5, 4), ph = r.range(0, 6), N = r.int(5, 7);
+    const pts = Array.from({ length: 144 }, (_, i) => {
+      const a = i / 144 * Math.PI * 2;
+      let rr = 1 + wob / 100 * Math.sin(a * 5 + ph);
+      if (r.nm) rr -= 0.24 * Math.max(0, Math.cos(a * N * 2)) ** 6 * Math.abs(Math.sin(a)) ** 1.5; // crocs tout autour
+      return [200 + Math.cos(a) * w * rr, cy + Math.sin(a) * h / 2 * rr];
+    });
+    return { paths: [poly(pts)], word: W.hurleur, teeth: 0, corners: null, hard: r.nm ? 2 : 0 };
+  },
+  cousu: r => {
+    const amp = r.range(6, 16), waves = r.pick([2, 3, 4]), y0 = r.range(296, 310), ph = r.range(0, 3);
+    const yf = x => y0 + amp * Math.sin((x - 85) / 230 * Math.PI * waves + ph);
+    const top = [], bot = [];
+    for (let x = 85; x <= 315; x += 5) { top.push([x, yf(x) - 5]); bot.unshift([x, yf(x) + 5]); }
+    const paths = [poly(top.concat(bot))];
+    const step = r.nm ? r.pick([18, 20, 22]) : r.pick([26, 30, 36]), sw = r.nm ? 3.5 : 4;
+    let n = 0;
+    for (let x = 108; x <= 292; x += step) {
+      const y = yf(x);
+      paths.push(poly([[x - sw, y - 34], [x + sw, y - 34], [x + sw, y - 14], [x - sw, y - 14]]));
+      paths.push(poly([[x - sw, y + 14], [x + sw, y + 14], [x + sw, y + 34], [x - sw, y + 34]]));
+      n++;
+    }
+    return { paths, word: W.recousu, teeth: n, corners: [[80, yf(85) - 4], [320, yf(315) - 4]], hard: r.nm ? 1 : 0 };
+  }
+};
+
+function genMouth(r) {
+  const kind = r.wpick(r.nm
+    ? [[2, "grin"], [2, "zigzag"], [1.5, "vampire"], [1.5, "squelette"], [1.5, "bave"], [1, "cri"], [1, "cousu"]]
+    : [[30, "dents"], [18, "grin"], [12, "vampire"], [12, "zigzag"], [9, "squelette"], [8, "bave"], [6, "cri"], [6, "cousu"]]);
+  return MOUTHS[kind](r);
+}
+
+// ---------- détails : front (fissure, toile de fissures, chauve-souris), fissures des côtés, plis de joues ou cicatrice ----------
+function genExtra(r, out) {
+  const paths = [];
+  let hard = 0;
+  const lowY = out.brows.uni ? 86 : 106;
+  const fh = r.nm ? r.wpick([[2, "crack"], [1.2, "bat"], [1.2, "web"]]) : r.wpick([[6, "crack"], [1.5, "bat"], [3, "none"]]);
+  if (fh === "crack" || fh === "web") {
+    const x = 200 + r.range(-8, 8), y0 = 50, y1 = Math.min(lowY, r.range(100, 112)), n = r.int(4, 5), dir = r.pick([-1, 1]);
+    const line = Array.from({ length: n + 1 }, (_, i) => [x + (i && i < n ? (i % 2 ? dir : -dir) * r.range(5, 8) : 0), y0 + (y1 - y0) * i / n]);
+    paths.push(poly(strip(line, q => 0.6 + 3.4 * Math.sin(Math.PI * Math.min(1, q * 1.6)))));
+    // chaque branche part du côté où pointe le zigzag, pour que les branches s'écartent
+    const starts = fh === "web" ? [1, 2] : (r.nm || r.chance(0.55)) ? [2] : [];
+    starts.forEach(j => {
+      const [bx, by] = line[j], side = Math.sign(bx - x) || 1;
+      const br = Array.from({ length: 3 }, (_, i) => [bx + side * (i * 10 + (i % 2) * 3), by + i * 7]);
+      paths.push(poly(strip(br, q => 2.4 * (1 - q) + 0.4)));
+    });
+    hard += fh === "web" ? 3 : 1.5;
+  } else if (fh === "bat") {
+    const sc = r.nm ? r.range(1.05, 1.25) : r.range(0.8, 1);
+    paths.push(poly(bat().map(([x, y]) => [200 + x * sc, 66 + y * sc])));
+    hard += 1.5;
+  }
+  if (r.chance(r.nm ? 0.6 : 0.08)) {
+    for (const sx of [-1, 1]) {
+      const x = 200 + sx * r.range(58, 66), y0 = r.range(55, 58), y1 = y0 + r.range(15, 19);
+      const line = Array.from({ length: 4 }, (_, i) => [x + (i && i < 3 ? (i % 2 ? 1 : -1) * r.range(3, 6) : 0), y0 + (y1 - y0) * i / 3]);
+      paths.push(poly(strip(line, q => 0.5 + 2.6 * Math.sin(Math.PI * q))));
+    }
+    hard += 1;
+  }
+  const cs = out.mouth.corners;
+  if (cs && r.chance(r.nm ? 0.6 : 0.35)) {
+    // plis de joues au-dessus des coins de la bouche (un par coin, la bouche peut être penchée)
+    const bow = r.range(9, 14), len = r.range(40, 50);
+    cs.forEach(([cx, cy], side) => {
+      const sg = side ? -1 : 1;
+      const line = Array.from({ length: 13 }, (_, i) => { const q = i / 12; return [cx + sg * (8 - bow * Math.sin(Math.PI * q)), cy - 6 - len + len * q]; });
+      paths.push(poly(strip(line, q => 0.6 + 3.2 * Math.sin(Math.PI * q))));
+    });
+    hard += 1;
+  } else if (!out.eyes.drip && r.chance(r.nm ? 0.5 : 0.1)) {
+    // cicatrice recousue sur une joue : un trait et des points de suture détachés
+    const sx = r.pick([-1, 1]);
+    const line = Array.from({ length: 5 }, (_, i) => { const q = i / 4; return [200 + sx * (52 + 42 * q), 202 + 24 * q + (i % 2 ? r.range(-2, 2) : 0)]; });
+    paths.push(poly(strip(line, q => 0.6 + 2 * Math.sin(Math.PI * q))));
+    for (const q of [0.28, 0.52, 0.76]) {
+      const i = q * 4, a = line[Math.floor(i)], b = line[Math.ceil(i)], f = i - Math.floor(i);
+      const px = a[0] + (b[0] - a[0]) * f, py = a[1] + (b[1] - a[1]) * f;
+      const dx = line[4][0] - line[0][0], dy = line[4][1] - line[0][1], l = Math.hypot(dx, dy), nx = -dy / l, ny = dx / l;
+      for (const sg of [-1, 1]) paths.push(poly(strip([[px + nx * sg * 5, py + ny * sg * 5], [px + nx * sg * 12, py + ny * sg * 12]], () => 1.4)));
+    }
+    hard += 2;
+  }
+  return { paths, hard };
+}
+
+const GEN = { eyes: genEyes, brows: genBrows, nose: genNose, mouth: genMouth, extra: genExtra };
+
+function build(seeds) {
+  const out = {};
+  for (const k of PARTS) { const R = rng(seeds[k]); R.nm = seeds[k] > NM; out[k] = GEN[k](R, out); }
+  const paths = [].concat(...PARTS.map(k => out[k].paths));
+  const nightmare = PARTS.every(k => seeds[k] > NM);
+  const nr = rng(seeds.eyes * 31 + seeds.mouth);
+  const noun = nr.pick(NOUNS), adj = nr.chance(0.5) ? out.eyes.word : out.mouth.word;
+  const score = paths.length + (out.mouth.teeth || 0) * 0.8 + PARTS.reduce((s, k) => s + (out[k].hard || 0), 0);
+  const diff = nightmare ? "x" : score < 15 ? "f" : score < 22.5 ? "m" : "c";
+  return { paths, noun, adj, diff, cuts: paths.length, score };
+}
+
+// ---------- état ----------
+const $ = id => document.getElementById(id);
+const stage = $("stage"), art = $("art");
+const enc = s => PARTS.map(k => s[k].toString(36)).join("-");
+const dec = str => { const a = String(str).trim().toLowerCase().split("-"); if (a.length !== 5 || a.some(x => !/^[0-9a-z]{1,5}$/.test(x))) return null; const o = {}; PARTS.forEach((k, i) => o[k] = parseInt(a[i], 36)); return o; };
+
+let view = { scale: 100, dy: 0, sw: 4, outline: true, invert: false, guide: true, level: "all" };
+let locks = {}, seeds = null, pastFaces = [], cur = null;
+try { const s = JSON.parse(localStorage.getItem("pochoir-rand") || "{}"); if (s.view) Object.assign(view, s.view); if (Array.isArray(s.pastFaces)) pastFaces = s.pastFaces.filter(dec).slice(0, 12); } catch (e) {}
+const save = () => { try { localStorage.setItem("pochoir-rand", JSON.stringify({ view, pastFaces })); } catch (e) {} };
+
+const lockBox = $("locks");
+for (const k of PARTS) {
+  const b = document.createElement("button");
+  b.className = "chip"; b.id = "lock-" + k; b.setAttribute("aria-pressed", "false");
+  b.onclick = () => { locks[k] = !locks[k]; b.setAttribute("aria-pressed", String(!!locks[k])); };
+  lockBox.appendChild(b);
+}
+
+// ---------- difficulté ----------
+const LEVELS = ["all", "f", "m", "c", "x"];
+const levelBox = $("levels");
+for (const k of LEVELS) {
+  const b = document.createElement("button");
+  b.className = "chip " + k; b.dataset.level = k;
+  b.onclick = () => {
+    view.level = k; renderLevels(); save();
+    // si le visage affiché ne correspond pas, on en tire un nouveau
+    if (k !== "all" && seeds && build(seeds).diff !== k) roll();
+  };
+  levelBox.appendChild(b);
+}
+const lvlMsg = document.createElement("span"); lvlMsg.id = "lvlMsg"; levelBox.appendChild(lvlMsg);
+function renderLevels() {
+  levelBox.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.level === view.level)));
+  lvlMsg.textContent = "";
+}
+
+function show(newSeeds, push = true) {
+  seeds = newSeeds;
+  const code = enc(seeds);
+  const f = cur = build(seeds);
+  art.innerHTML = f.paths.map(d => `<path class="cut" d="${d}" stroke-width="${view.sw}" stroke-linejoin="round"/>`).join("");
+  art.classList.remove("flick"); requestAnimationFrame(() => art.classList.add("flick"));
+  $("code").textContent = code;
+  renderFaceText();
+  if (push) { pastFaces = [code, ...pastFaces.filter(c => c !== code)].slice(0, 12); save(); }
+  try { if (location.hash !== "#" + code) window.history.replaceState(null, "", "#" + code); } catch (e) {}
+  renderHist(code);
+}
+
+function renderFaceText() {
+  if (!cur) return;
+  $("name").textContent = fmtName(cur.noun, cur.adj, lang);
+  $("name").className = cur.diff === "x" ? "x" : "";
+  const d = $("diff"); d.className = "diff " + cur.diff; d.textContent = t("levels")[cur.diff];
+  $("count").textContent = t("cuts")(cur.cuts);
+}
+
+function renderHist(curCode) {
+  const h = $("hist"); h.innerHTML = "";
+  for (const c of pastFaces) {
+    const f = build(dec(c)), b = document.createElement("button");
+    b.title = fmtName(f.noun, f.adj, lang); b.className = c === curCode ? "cur" : "";
+    b.innerHTML = `<svg viewBox="20 30 360 360">${f.paths.map(d => `<path d="${d}"/>`).join("")}</svg>`;
+    b.onclick = () => show(dec(c), false);
+    h.appendChild(b);
+  }
+}
+
+function roll() {
+  // tire des visages jusqu'à tomber sur la difficulté choisie ; en « Toutes », un visage sur dix sort en cauchemar
+  const nm = view.level === "x" || (view.level === "all" && Math.random() < 0.1);
+  let s, found = false;
+  for (let i = 0; i < 500 && !found; i++) {
+    s = {};
+    for (const k of PARTS) s[k] = locks[k] && seeds ? seeds[k] : newSeed(nm);
+    found = view.level === "all" || build(s).diff === view.level;
+  }
+  show(s);
+  lvlMsg.textContent = found ? "" : t("notFound");
+}
+
+// ---------- langue ----------
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = t("title");
+  document.querySelectorAll("[data-t]").forEach(el => el.textContent = t(el.dataset.t));
+  for (const k of PARTS) $("lock-" + k).textContent = t("parts")[k];
+  levelBox.querySelectorAll("button").forEach(b => b.textContent = t("levels")[b.dataset.level]);
+  $("steps").innerHTML = ""; t("steps").forEach(s => { const li = document.createElement("li"); li.textContent = s; $("steps").appendChild(li); });
+  $("codeIn").placeholder = t("ph");
+  stage.title = t("stageTitle");
+  $("mainSvg").setAttribute("aria-label", t("art"));
+  $("hist").setAttribute("aria-label", t("hist"));
+  $("lang-en").setAttribute("aria-pressed", String(lang === "en"));
+  $("lang-fr").setAttribute("aria-pressed", String(lang === "fr"));
+  lvlMsg.textContent = "";
+  renderFaceText();
+  if (seeds) renderHist(enc(seeds));
+}
+const setLang = l => { lang = l; try { localStorage.setItem("pochoir-lang", l); } catch (e) {} applyLang(); };
+$("lang-en").onclick = () => setLang("en");
+$("lang-fr").onclick = () => setLang("fr");
+
+function applyView() {
+  const s = view.scale / 100;
+  $("xf").setAttribute("transform", `translate(200 ${215 + view.dy}) scale(${s}) translate(-200 -215)`);
+  stage.classList.toggle("outline", view.outline);
+  stage.classList.toggle("invert", view.invert);
+  $("guideG").style.display = view.guide ? "" : "none";
+  art.querySelectorAll("path").forEach(p => p.setAttribute("stroke-width", view.sw));
+  $("scale").value = view.scale; $("scaleV").textContent = view.scale + " %";
+  $("dy").value = view.dy; $("dyV").textContent = view.dy;
+  $("sw").value = view.sw; $("swV").textContent = view.sw;
+  $("outline").checked = view.outline; $("invert").checked = view.invert; $("showGuide").checked = view.guide;
+  save();
+}
+
+$("scale").oninput = e => { view.scale = +e.target.value; applyView(); };
+$("dy").oninput = e => { view.dy = +e.target.value; applyView(); };
+$("sw").oninput = e => { view.sw = +e.target.value; applyView(); };
+$("outline").onchange = e => { view.outline = e.target.checked; applyView(); };
+$("invert").onchange = e => { view.invert = e.target.checked; applyView(); };
+$("showGuide").onchange = e => { view.guide = e.target.checked; applyView(); };
+$("roll").onclick = roll;
+$("load").onclick = () => { const s = dec($("codeIn").value); $("codeIn").value = ""; if (s) { show(s); $("codeIn").placeholder = t("ph"); } else $("codeIn").placeholder = t("bad"); };
+
+const toggleBare = () => document.body.classList.toggle("bare");
+stage.onclick = toggleBare;
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT") return;
+  if (e.key === "h" || e.key === "H") toggleBare();
+  else if (e.key === " " || e.key === "r" || e.key === "R") { e.preventDefault(); roll(); }
+});
+$("fs").onclick = async () => { document.body.classList.add("bare"); try { await document.documentElement.requestFullscreen(); } catch (e) {} };
+document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement) document.body.classList.remove("bare"); });
+window.addEventListener("hashchange", () => { const s = dec(location.hash.slice(1)); if (s && enc(s) !== enc(seeds)) show(s); });
+
+applyView();
+renderLevels();
+applyLang();
+const fromHash = dec(location.hash.slice(1));
+if (fromHash) show(fromHash);
+else if (pastFaces.length) show(dec(pastFaces[0]), false);
+else show({ eyes: 48211, brows: 902, nose: 7731, mouth: 31337, extra: 4242 });
+</script>
+</body>
+</html>
