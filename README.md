@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎃 Pumpkin Stencils
+# 🎃 Smashing-Pumpkins
 
 ### An endless supply of jack-o'-lantern faces, ready to project onto your pumpkin.
 
@@ -17,7 +17,7 @@
 
 <br />
 
-<img src="assets/app-en.png" alt="A Nightmare face, The Stitched Imp, shown in the app with its controls" width="900" />
+<img src="assets/easy-rolls.gif" alt="Rolling one Easy face after another: each click draws a new pumpkin face and adds it to the history" width="900" />
 
 </div>
 
@@ -26,7 +26,7 @@
 Every October it is the same thing: you have a pumpkin, a knife, a free evening, and no idea which face to carve.
 The classic triangle eyes again? A stencil found online that everybody has already done?
 
-**Pumpkin Stencils** is a small side project built for fun, to solve exactly that. Each click makes a new face out of
+**Smashing-Pumpkins** is a small side project built for fun, to solve exactly that. Each click makes a new face out of
 eyes, brows, a nose, a mouth and a few details, gives it a name ("The Ravenous Specter", "The Jagged Zombie") and a
 difficulty. When a face makes you smile, you keep it, project it onto the pumpkin, trace the outlines and carve.
 It is an idea machine: roll a dozen faces, mix the best parts, and end up with a pumpkin nobody else on the street
@@ -169,7 +169,7 @@ The only outside resource is two Google Fonts (Creepster for the titles, DM Mono
 
 ```text
 citrouille.html    The whole app: page, styles, generators, interface
-assets/            Screenshots and gallery used in this README
+assets/            Animated GIF, screenshots and gallery used in this README
 README.md          This file
 ```
 
